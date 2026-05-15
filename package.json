@@ -9,9 +9,9 @@
     "dev:server": "cd server && npm run dev",
     "build:client": "cd client && npm run build",
     "build:server": "cd server && npm run build",
-    "start:server": "cd server && npm start",
-    "start": "node server.js",
-    "build": "vite build"
+    "build": "npm run build:client && npm run build:server",
+    "start": "node server/server.js",
+    "start:server": "cd server && npm start"
   },
   "keywords": [
     "meeting",

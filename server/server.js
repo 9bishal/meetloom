@@ -9,9 +9,10 @@ const { default: app } = await import('./app.js');
 // Configuration
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
+const HOST = '0.0.0.0'; // Listen on all interfaces for Azure
 
 // Start server
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(`
 ╔════════════════════════════════════════╗
 ║       🎯 MeetLoom Server Started       ║
