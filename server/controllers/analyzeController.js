@@ -60,28 +60,23 @@ export const analyzeTranscript = async (req, res) => {
 
 /**
  * GET /api/health
- * Health check endpoint
+ * Health check endpoint - simple health check without calling external API
  */
-export const healthCheck = async (req, res) => {
+export const healthCheck = (req, res) => {
   try {
-    const isHealthy = await grokService.healthCheck();
-
-    if (isHealthy) {
-      return res.status(200).json({
-        success: true,
-        message: 'Server is healthy',
-        timestamp: new Date().toISOString(),
-      });
-    } else {
-      return res.status(503).json({
-        success: false,
-        message: 'AI service unavailable',
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      message: 'MeetLoom API is healthy',
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      version: '1.0.0',
+    });
   } catch (error) {
-    return res.status(503).json({
+    return res.status(500).json({
       success: false,
       error: 'Health check failed',
+      message: error.message,
     });
   }
 };

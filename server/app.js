@@ -21,12 +21,16 @@ app.use(corsMiddleware);
 
 // ====== Routes ======
 
-// Health check at root
+// Root endpoint
 app.get('/', (req, res) => {
   res.json({
     success: true,
     message: 'MeetLoom API is running',
     version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      analyze: 'POST /api/analyze',
+    },
   });
 });
 
