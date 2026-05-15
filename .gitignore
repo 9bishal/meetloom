@@ -24,3 +24,10 @@ coverage/
 # GitHub workflows (keep locally for reference)
 .github/workflows/deploy-*.yml
 
+azure-app-service-config.json
+azure-setup.sh
+deploy-azure-cli.sh
+deploy-now.sh
+deployment-checklist.sh
+setup.bat
+setup.sh
