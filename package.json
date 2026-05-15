@@ -1,0 +1,28 @@
+{
+  "name": "meetloom",
+  "version": "1.0.0",
+  "description": "AI-powered meeting summarizer - turn transcripts into actionable insights",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "start": "node server/server.js",
+    "start:server": "cd server && npm start"
+  },
+  "keywords": [
+    "meeting",
+    "summarizer",
+    "ai",
+    "grok",
+    "transcription"
+  ],
+  "author": "MeetLoom",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

@@ -1,0 +1,66 @@
+name: Validate Deployment Configuration
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'staticwebapp.config.json'
+      - 'azure-app-service-config.json'
+      - '.github/workflows/validate-deployment.yml'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-config:
+    runs-on: ubuntu-latest
+    name: Validate Azure Configuration Files
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate Static Web Apps config
+        run: |
+          node -e "
+          try {
+            const config = require('./staticwebapp.config.json');
+            console.log('✅ staticwebapp.config.json is valid JSON');
+            if (config.routes && Array.isArray(config.routes)) {
+              console.log('✅ Routes defined:', config.routes.length);
+            }
+            if (config.globalHeaders) {
+              console.log('✅ Global headers configured');
+            }
+          } catch(e) {
+            console.error('❌ Invalid staticwebapp.config.json:', e.message);
+            process.exit(1);
+          }
+          "
+
+      - name: Validate App Service config
+        run: |
+          node -e "
+          try {
+            const config = require('./azure-app-service-config.json');
+            console.log('✅ azure-app-service-config.json is valid JSON');
+            console.log('   Name:', config.name);
+            console.log('   Runtime:', config.runtimeStack);
+            console.log('   Always On:', config.alwaysOn);
+            console.log('   Auto Heal:', config.autoHealEnabled);
+          } catch(e) {
+            console.error('❌ Invalid azure-app-service-config.json:', e.message);
+            process.exit(1);
+          }
+          "
+
+      - name: Check environment configuration
+        run: |
+          echo "Checking environment configuration files..."
+          [ -f server/.env ] && echo "✅ Server .env exists" || echo "⚠️ Server .env missing (will use deployment secrets)"
+          [ -f client/.env ] && echo "✅ Client .env exists" || echo "⚠️ Client .env missing (will use build-time env)"
+          echo "Note: Deployment-specific env vars should be set in Azure Portal or GitHub Secrets"
