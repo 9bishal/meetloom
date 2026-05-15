@@ -10,12 +10,19 @@ echo "🚀 Starting MeetLoom API Server"
 echo "Environment: $NODE_ENV"
 echo "Port: ${PORT:-8080}"
 
-# Install dependencies if needed
+# Install root dependencies if needed
 if [ ! -d "node_modules" ]; then
-  echo "📦 Installing dependencies..."
+  echo "📦 Installing root dependencies..."
   npm ci --production
+fi
+
+# Install server dependencies if needed
+if [ ! -d "server/node_modules" ]; then
+  echo "📦 Installing server dependencies..."
+  cd server && npm ci --production && cd ..
 fi
 
 # Start the server
 echo "🎯 Starting Node.js server..."
+cd server && npm start
 exec node server/server.js
