@@ -48,6 +48,12 @@ meetloom/
     services/grokService.js
     prompts/analysisPrompt.js
     middleware/
+  docs/
+    RAILWAY_SETUP.md      # Railway setup + CI/CD hook guide
+  render.yaml             # Render blueprint (backend + frontend)
+  .github/workflows/
+    ci-cd.yml             # CI/CD pipeline
+    keepalive.yml         # Scheduled health pings
   README.md
 ```
 
@@ -88,113 +94,81 @@ meetloom/
 - File: `server/services/grokService.js`
 - Prompting logic: `server/prompts/analysisPrompt.js`
 
-### Output Control Strategy
-The prompt enforces a strict JSON schema to reduce format drift.
-Backend then re-validates fields and normalizes priority values (`High`, `Medium`, `Low`) before returning results.
-
-## Validation and Error Handling
-### Frontend
-- Empty transcript checks
-- Minimum length checks
-- Loading state while processing
-- User-friendly error alert
-- Backend health check polling
-
-### Backend
-- Missing/empty transcript validation
-- Transcript max-length guard
-- AI API timeout handling
-- API auth / rate limit handling
-- JSON parse and structure validation
-
 ## Environment Variables
 
-### Root `.env` (current local setup)
+### Backend (`server` / deployment env)
 ```env
+NODE_ENV=production
 GROQ_API_KEY=your_groq_api_key
+CORS_ORIGIN=https://your-frontend-domain
 PORT=5001
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:5173
 ```
 
-### Frontend `client/.env`
+### Frontend (`client` build env)
 ```env
-VITE_API_URL=http://localhost:5001
+VITE_API_URL=https://your-backend-domain
 ```
 
 ## Local Setup and Run
-### 1. Install dependencies
 ```bash
 npm install
 cd server && npm install
 cd ../client && npm install
 ```
 
-### 2. Configure environment
-- Add Groq API key to root `.env` as `GROQ_API_KEY`
-- Ensure frontend points to backend via `client/.env`
-
-### 3. Start backend (port 5001)
+Start backend:
 ```bash
 cd server
 PORT=5001 npm start
 ```
 
-### 4. Start frontend
+Start frontend:
 ```bash
 cd client
 npm run dev
 ```
 
-### 5. Open app
-- Frontend: `http://localhost:5173`
-- Backend health: `http://localhost:5001/api/health`
+## Deployment
 
-## Product Workflow
-1. Paste meeting transcript.
-2. Click **Analyze Meeting**.
-3. Receive generated summary.
-4. Review extracted tasks with assignee, priority, deadline, and reasoning.
-5. Copy/use tasks in team execution tools.
+### Render (Configured)
+Use `render.yaml` as blueprint.
 
-## Design and Usability Notes
-- Clean single-page flow
-- Readable cards for summary and tasks
-- Color-coded priority labels
-- Responsive behavior for smaller screens
+Services:
+- `meetloom-backend` (Node web service)
+- `meetloom-frontend` (static site)
 
-## Practical Assumptions
-- Transcript contains enough context to infer tasks.
-- AI-suggested deadlines are tentative and should be reviewed by humans.
-- Priority classification is heuristic and based on transcript intent.
+Set env vars:
+- Backend: `GROQ_API_KEY`, `CORS_ORIGIN`
+- Frontend: `VITE_API_URL`
 
-## Known Limitations
-- No authentication or multi-user persistence
-- No transcript file upload (paste-only input)
-- No direct integrations with PM tools (Jira/Linear/Trello)
-- AI output quality depends on transcript quality
+### Railway (Guide Included)
+See `docs/RAILWAY_SETUP.md`.
 
-## Suggested Next Improvements
-- Export tasks to CSV / Notion / Jira
-- Meeting source integrations (Zoom/Meet transcript ingestion)
-- Team workspace + history
-- Confidence scoring for extracted tasks
+## Keep It Always Active
+This repo includes `.github/workflows/keepalive.yml` to ping backend every 10 minutes.
 
-## Demo / Deployment
+Required GitHub secret:
+- `BACKEND_HEALTHCHECK_URL=https://your-backend-domain/api/health`
+
+Important:
+- Free tiers may still sleep/scale down depending provider policy.
+- For strict always-on availability, use a paid/non-sleep plan and keep at least 1 running instance.
+
+## CI/CD Pipeline
+Workflow: `.github/workflows/ci-cd.yml`
+
+Includes:
+- Frontend lint + build
+- Backend build check
+- Optional deploy hooks on `main`
+
+Optional secrets:
+- `RENDER_DEPLOY_HOOK_BACKEND`
+- `RENDER_DEPLOY_HOOK_FRONTEND`
+- `RAILWAY_DEPLOY_HOOK_URL`
+
+## Demo / Submission Links
 - Live Demo Link: `ADD_LINK_HERE`
 - Backend URL: `ADD_LINK_HERE`
-
-## Walkthrough Video (5-10 min)
-- Video Link: `ADD_LINK_HERE`
-- Script reference: `PRESENTATION_VIDEO_SCRIPT.md`
-
-## Submission Checklist
-- [x] Functional source code in repository
-- [x] AI integration for summarization and task extraction
-- [x] Validation/loading/error handling
-- [x] Responsive UI
-- [ ] Public deployment link added
-- [ ] Walkthrough video link added
-
-## Team
-Prepared for technical assignment submission (Team Involynk).
+- Walkthrough Video (5-10 min): `ADD_LINK_HERE`
+- Video Script: `PRESENTATION_VIDEO_SCRIPT.md`

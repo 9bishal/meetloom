@@ -1,0 +1,23 @@
+name: Keep Backend Awake
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend health endpoint
+        if: ${{ secrets.BACKEND_HEALTHCHECK_URL != '' }}
+        run: |
+          echo "Pinging ${{ secrets.BACKEND_HEALTHCHECK_URL }}"
+          curl -fsS "${{ secrets.BACKEND_HEALTHCHECK_URL }}" >/dev/null
+          echo "Backend is reachable"
+
+      - name: Skip when secret is missing
+        if: ${{ secrets.BACKEND_HEALTHCHECK_URL == '' }}
+        run: |
+          echo "BACKEND_HEALTHCHECK_URL secret is not set."
+          echo "Set it to your deployed endpoint, e.g. https://your-backend-domain/api/health"

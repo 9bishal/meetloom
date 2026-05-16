@@ -19,8 +19,7 @@ coverage/
 
 # Documentation (keep locally but not in repo)
 *.md
-!README.md
-!AZURE-DEPLOYMENT.md
+README.md
 
 # GitHub workflows (keep locally for reference)
 .github/workflows/deploy-*.yml

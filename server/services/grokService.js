@@ -7,7 +7,7 @@ import { generateAnalysisPrompt } from '../prompts/analysisPrompt.js';
 class GroqService {
   constructor() {
     // Initialize with Groq API configuration
-    this.apiKey = process.env.GROQ_API_KEY;
+    this.apiKey = process.env.GROQ_API_KEY || process.env.GROK_API_KEY;
     this.apiBaseUrl = 'https://api.groq.com/openai/v1';
     this.model = 'llama-3.3-70b-versatile';
     
@@ -27,6 +27,10 @@ class GroqService {
       // Validate input
       if (!transcript || transcript.trim().length === 0) {
         throw new Error('Transcript cannot be empty');
+      }
+
+      if (!this.apiKey) {
+        throw new Error('GROQ_API_KEY is not configured on the backend');
       }
 
       // Generate the analysis prompt
