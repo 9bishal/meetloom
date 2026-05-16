@@ -101,33 +101,7 @@ npm run dev
 Frontend: `http://localhost:5173`
 Backend Health: `http://localhost:5001/api/health`
 
-## Deployment
-### Render (Backend)
-- Root Directory: `server`
-- Build Command: `npm ci`
-- Start Command: `npm start`
-- Required env vars: `GROQ_API_KEY`, `CORS_ORIGIN`, `NODE_ENV`
 
-### Vercel (Frontend)
-- Root Directory: `client`
-- Build Command: `npm run build`
-- Output Directory: `dist`
-- Required env var: `VITE_API_URL=https://meetloom.onrender.com`
-
-## CI/CD
-GitHub Actions workflows included:
-- `.github/workflows/ci-cd.yml` for checks + optional deploy hooks
-- `.github/workflows/keepalive.yml` for scheduled health pings
-
-Optional GitHub Secrets:
-- `RENDER_DEPLOY_HOOK_BACKEND`
-- `RENDER_DEPLOY_HOOK_FRONTEND`
-- `RAILWAY_DEPLOY_HOOK_URL`
-- `BACKEND_HEALTHCHECK_URL`
-
-## Submission Assets
-- Walkthrough Script: `PRESENTATION_VIDEO_SCRIPT.md`
-- Railway Setup Guide: `docs/RAILWAY_SETUP.md`
 
 ## Known Limitations
 - No authentication/user accounts
