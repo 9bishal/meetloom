@@ -13,7 +13,7 @@ import {
   SummaryCard,
   TaskList,
 } from './components/index.js';
-import { analyzeTranscript, healthCheck } from './services/api.js';
+import { analyzeTranscript, healthCheck, waitForBackendReady } from './services/api.js';
 import './App.css';
 
 function App() {
@@ -23,14 +23,15 @@ function App() {
   const [error, setError] = useState(null);
   const [analysis, setAnalysis] = useState(null);
   const [serverHealthy, setServerHealthy] = useState(false);
+  const [isWakingBackend, setIsWakingBackend] = useState(false);
 
   // Check server health on mount
   useEffect(() => {
     const checkHealth = async () => {
       const healthy = await healthCheck();
       setServerHealthy(healthy);
-      if (!healthy) {
-        setError('Backend server is not responding. Make sure it\'s running on port 5001.');
+      if (healthy && error === 'Waking up backend server... this can take up to 30 seconds on Render.') {
+        setError(null);
       }
     };
 
@@ -62,11 +63,26 @@ function App() {
     setIsLoading(true);
 
     try {
+      // Wake backend if it is sleeping (Render cold start)
+      if (!serverHealthy) {
+        setIsWakingBackend(true);
+        setError('Waking up backend server... this can take up to 30 seconds on Render.');
+        const ready = await waitForBackendReady();
+        setIsWakingBackend(false);
+        setServerHealthy(ready);
+
+        if (!ready) {
+          throw new Error('Backend is still starting. Please retry in a few seconds.');
+        }
+      }
+
       // Call API to analyze transcript
       const result = await analyzeTranscript(transcript);
 
       // Update state with results
       setAnalysis(result);
+      setServerHealthy(true);
+      setError(null);
     } catch (err) {
       // Handle errors
       setError(err.message || 'Failed to analyze transcript. Please try again.');
@@ -126,17 +142,13 @@ function App() {
             <AnalyzeButton
               onClick={handleAnalyze}
               isLoading={isLoading}
-              disabled={!serverHealthy || !transcript.trim()}
+              disabled={!transcript.trim() || isWakingBackend}
             />
             {(transcript || analysis) && (
               <button
                 className="btn"
                 onClick={handleClear}
-                style={{
-                  background: '#E8E6DC',
-                  color: '#141413',
-                  border: 'none',
-                }}
+                id="clear-btn"
               >
                 Clear
               </button>
@@ -144,14 +156,14 @@ function App() {
           </div>
 
           {/* Server Status Indicator */}
-          {!serverHealthy && (
-            <p style={{
-              marginTop: '1rem',
-              fontSize: '0.85rem',
-              color: '#D97757',
-              textAlign: 'center',
-            }}>
-              ⚠️ Backend server is not responding
+          {!serverHealthy && !isLoading && (
+            <p className="server-status">
+              ⚠️ Backend is sleeping. Click Analyze once to wake it up.
+            </p>
+          )}
+          {isWakingBackend && (
+            <p className="server-status">
+              ⏳ Waking backend on Render...
             </p>
           )}
         </div>
@@ -185,15 +197,7 @@ function App() {
               <TaskList tasks={analysis.tasks} />
 
               {/* Export Hint */}
-              <div style={{
-                marginTop: '3rem',
-                padding: '2rem',
-                backgroundColor: '#FAF9F5',
-                borderRadius: '1rem',
-                textAlign: 'center',
-                color: '#B0AEA5',
-                fontSize: '0.9rem',
-              }}>
+              <div className="tip-box">
                 <p style={{ margin: 0 }}>
                   💡 Tip: Click the copy button on any card to copy the content to your clipboard.
                 </p>
@@ -204,16 +208,7 @@ function App() {
 
         {/* Empty State */}
         {!analysis && !isLoading && transcript && (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 1,
-            padding: '2rem',
-            color: '#B0AEA5',
-            textAlign: 'center',
-          }}>
+          <div className="empty-hint">
             <p style={{ fontSize: '3rem' }}>📝</p>
             <p style={{ margin: '0.5rem 0', fontSize: '1.1rem', fontWeight: '500' }}>
               Ready to analyze?
@@ -226,14 +221,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer style={{
-        padding: '2rem',
-        textAlign: 'center',
-        borderTop: '1px solid #E8E6DC',
-        backgroundColor: 'rgba(250, 249, 245, 0.5)',
-        fontSize: '0.85rem',
-        color: '#B0AEA5',
-      }}>
+      <footer className="app-footer">
         <p style={{ margin: 0 }}>
           MeetLoom v1.0 • Powered by AI • <a href="#" style={{ color: '#D97757', textDecoration: 'none' }}>Learn More</a>
         </p>

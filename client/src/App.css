@@ -5,14 +5,19 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to bottom, #FAF9F5, #f5f3eb);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(116, 164, 255, 0.18), transparent 38%),
+    radial-gradient(circle at 100% 0%, rgba(255, 158, 120, 0.22), transparent 32%),
+    linear-gradient(145deg, #f3f7ff 0%, #f6f9ff 48%, #fff7ef 100%);
 }
 
 /* Navbar styling */
 .navbar {
-  background: rgba(250, 249, 245, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #E8E6DC;
+  background: rgba(255, 255, 255, 0.46);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 10px 30px rgba(31, 62, 122, 0.08);
   position: sticky;
   top: 0;
   z-index: 50;
@@ -27,14 +32,24 @@
 
 /* Hero section */
 .hero-section {
-  padding: 6rem 2rem;
+  padding: 4rem 1.5rem 2.25rem;
   text-align: center;
-  background: linear-gradient(135deg, rgba(217, 119, 87, 0.05), rgba(232, 230, 220, 0.1));
+  position: relative;
+}
+
+.hero-section::after {
+  content: "";
+  position: absolute;
+  inset: 10% 10% auto;
+  height: 220px;
+  background: linear-gradient(90deg, rgba(255, 131, 87, 0.18), rgba(118, 161, 255, 0.2));
+  filter: blur(54px);
+  z-index: -1;
 }
 
 /* Section spacing */
 .section {
-  padding: 3rem 2rem;
+  padding: 1.5rem 1.25rem;
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
@@ -42,10 +57,17 @@
 
 /* Input container */
 .input-container {
-  margin: 2rem 0;
+  margin: 0.5rem 0 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.44);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 18px 40px rgba(41, 67, 120, 0.14);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 1.25rem;
+  padding: 1.4rem;
 }
 
 /* Transcript input */
@@ -53,10 +75,10 @@
   width: 100%;
   min-height: 200px;
   padding: 1rem;
-  border: 2px solid #E8E6DC;
+  border: 1px solid rgba(129, 162, 231, 0.24);
   border-radius: 1rem;
   font-size: 1rem;
-  background: white;
+  background: rgba(255, 255, 255, 0.66);
   color: #141413;
   resize: vertical;
   transition: all 0.3s ease;
@@ -64,8 +86,8 @@
 
 .transcript-input:focus {
   outline: none;
-  border-color: #D97757;
-  box-shadow: 0 0 0 4px rgba(217, 119, 87, 0.1);
+  border-color: rgba(101, 139, 228, 0.65);
+  box-shadow: 0 0 0 4px rgba(114, 157, 255, 0.18);
 }
 
 .transcript-input::placeholder {
@@ -75,9 +97,9 @@
 /* Button styles */
 .btn {
   font-weight: 600;
-  padding: 0.875rem 2rem;
+  padding: 0.75rem 1.4rem;
   border-radius: 0.5rem;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
@@ -88,14 +110,13 @@
 }
 
 .btn-primary {
-  background: #141413;
-  color: #FAF9F5;
-  box-shadow: 0 4px 12px rgba(20, 20, 19, 0.15);
+  background: linear-gradient(135deg, #ff8b60 0%, #ff6d73 100%);
+  color: #fff;
+  box-shadow: 0 12px 26px rgba(255, 109, 115, 0.3);
 }
 
 .btn-primary:hover {
-  background: #2a2a29;
-  box-shadow: 0 6px 16px rgba(20, 20, 19, 0.25);
+  box-shadow: 0 16px 30px rgba(255, 109, 115, 0.37);
   transform: translateY(-1px);
 }
 
@@ -107,30 +128,32 @@
 
 /* Results section */
 .results-section {
-  margin-top: 3rem;
+  margin-top: 1.25rem;
   animation: slideUp 0.5s ease-out;
 }
 
 /* Card styles */
 .card {
-  background: white;
-  border: 1px solid #E8E6DC;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 1rem;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 18px 40px rgba(41, 67, 120, 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: all 0.3s ease;
 }
 
 .card:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  border-color: #D97757;
+  box-shadow: 0 22px 44px rgba(41, 67, 120, 0.2);
+  border-color: rgba(105, 143, 228, 0.5);
 }
 
 /* Summary card */
 .summary-card {
-  background: linear-gradient(135deg, rgba(217, 119, 87, 0.05), rgba(232, 230, 220, 0.05));
-  border-left: 4px solid #D97757;
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.38));
+  border-left: 4px solid #ff8664;
 }
 
 /* Task card */
@@ -166,26 +189,26 @@
 }
 
 .priority-high {
-  background: rgba(217, 119, 87, 0.15);
-  color: #D97757;
+  background: rgba(255, 109, 115, 0.18);
+  color: #ff5164;
 }
 
 .priority-medium {
-  background: rgba(212, 165, 116, 0.15);
-  color: #D4A574;
+  background: rgba(255, 173, 98, 0.2);
+  color: #d98238;
 }
 
 .priority-low {
-  background: rgba(176, 174, 165, 0.15);
-  color: #B0AEA5;
+  background: rgba(90, 136, 217, 0.13);
+  color: #5c84ca;
 }
 
 /* Loading state */
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid #E8E6DC;
-  border-top-color: #D97757;
+  border: 3px solid rgba(156, 180, 220, 0.3);
+  border-top-color: #ff7b6a;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -198,12 +221,13 @@
 
 /* Error alert */
 .error-alert {
-  background: rgba(217, 119, 87, 0.1);
-  border: 1px solid #D97757;
+  background: rgba(255, 121, 102, 0.12);
+  border: 1px solid rgba(255, 121, 102, 0.42);
   border-radius: 0.5rem;
   padding: 1rem;
   color: #141413;
   margin-bottom: 1rem;
+  backdrop-filter: blur(10px);
 }
 
 .error-alert strong {
@@ -212,8 +236,8 @@
 
 /* Copy button */
 .copy-btn {
-  background: transparent;
-  border: 1px solid #E8E6DC;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 0.375rem;
   padding: 0.5rem 0.75rem;
   cursor: pointer;
@@ -223,15 +247,66 @@
 }
 
 .copy-btn:hover {
-  background: #FAF9F5;
-  border-color: #D97757;
-  color: #D97757;
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #ff8362;
+  color: #ff8362;
 }
 
 .copy-btn.copied {
-  background: #D97757;
-  border-color: #D97757;
+  background: #ff8362;
+  border-color: #ff8362;
   color: white;
+}
+
+#clear-btn {
+  background: rgba(255, 255, 255, 0.5);
+  color: #21364f;
+  border: 1px solid rgba(255, 255, 255, 0.66);
+}
+
+#clear-btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+.server-status {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #d25f42;
+  text-align: center;
+}
+
+.tip-box {
+  margin-top: 1.25rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: 1rem;
+  text-align: center;
+  color: #6b7892;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(10px);
+}
+
+.empty-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 1.1rem;
+  color: #7f8da4;
+  text-align: center;
+}
+
+.app-footer {
+  padding: 1rem 1.25rem;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  font-size: 0.85rem;
+  color: #6b7892;
 }
 
 /* Empty state */
@@ -251,11 +326,11 @@
 /* Responsive */
 @media (max-width: 768px) {
   .hero-section {
-    padding: 4rem 1rem;
+    padding: 2.2rem 1rem 1.4rem;
   }
 
   .section {
-    padding: 2rem 1rem;
+    padding: 1rem;
   }
 
   .transcript-input {

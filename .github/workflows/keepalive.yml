@@ -2,22 +2,35 @@ name: Keep Backend Awake
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 jobs:
   ping-backend:
     runs-on: ubuntu-latest
+    env:
+      DEFAULT_BACKEND_HEALTHCHECK_URL: https://meetloom.onrender.com/api/health
     steps:
-      - name: Ping backend health endpoint
-        if: ${{ secrets.BACKEND_HEALTHCHECK_URL != '' }}
+      - name: Resolve healthcheck URL
+        id: resolve-url
         run: |
-          echo "Pinging ${{ secrets.BACKEND_HEALTHCHECK_URL }}"
-          curl -fsS "${{ secrets.BACKEND_HEALTHCHECK_URL }}" >/dev/null
-          echo "Backend is reachable"
+          TARGET_URL="${{ secrets.BACKEND_HEALTHCHECK_URL }}"
+          if [ -z "$TARGET_URL" ]; then
+            TARGET_URL="${{ env.DEFAULT_BACKEND_HEALTHCHECK_URL }}"
+          fi
+          echo "target_url=$TARGET_URL" >> "$GITHUB_OUTPUT"
 
-      - name: Skip when secret is missing
-        if: ${{ secrets.BACKEND_HEALTHCHECK_URL == '' }}
+      - name: Ping backend health endpoint with retries
         run: |
-          echo "BACKEND_HEALTHCHECK_URL secret is not set."
-          echo "Set it to your deployed endpoint, e.g. https://your-backend-domain/api/health"
+          TARGET_URL="${{ steps.resolve-url.outputs.target_url }}"
+          echo "Pinging $TARGET_URL"
+          for i in 1 2 3; do
+            if curl -fsS --max-time 20 "$TARGET_URL" >/dev/null; then
+              echo "Backend is reachable"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying..."
+            sleep 8
+          done
+          echo "Backend keepalive ping failed after retries"
+          exit 1
