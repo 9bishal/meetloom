@@ -2,12 +2,12 @@ name: Keep Backend Awake
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
-  workflow_dispatch:
+    - cron: '*/5 * * * *' # Every 5 minutes
+  workflow_dispatch: # Allow manual triggering from GitHub Actions UI
 
 jobs:
-  ping-backend:
-    runs-on: ubuntu-latest
+  ping-backend: 
+    runs-on: ubuntu-latest #GitHub creates a temporary Ubuntu Linux machine to execute the workflow.
     env:
       DEFAULT_BACKEND_HEALTHCHECK_URL: https://meetloom.onrender.com/api/health
     steps:
@@ -20,7 +20,7 @@ jobs:
           fi
           echo "target_url=$TARGET_URL" >> "$GITHUB_OUTPUT"
 
-      - name: Ping backend health endpoint with retries
+      - name: Ping backend health endpoint with retries #This actually sends the request.
         run: |
           TARGET_URL="${{ steps.resolve-url.outputs.target_url }}"
           echo "Pinging $TARGET_URL"
@@ -34,3 +34,30 @@ jobs:
           done
           echo "Backend keepalive ping failed after retries"
           exit 1
+
+
+
+# Simple Flow Diagram
+# Every 5 min
+#       ↓
+# Get URL
+#       ↓
+# Ping backend
+#       ↓
+# Success? ── YES → Done ✅
+#       ↓ NO
+# Retry 3 times
+#       ↓
+# Still failed?
+#       ↓
+# Workflow fails ❌
+
+
+
+# This GitHub Actions workflow keeps the backend server awake by automatically pinging the health-check endpoint every 5 minutes. 
+# It uses a cron schedule and can also be triggered manually through GitHub Actions. 
+# The workflow first checks for a custom backend URL stored in GitHub Secrets; if unavailable, 
+# it uses a default URL. 
+# It sends a request using curl and retries up to 3 times if the server does not respond. 
+# If the backend becomes reachable, the workflow succeeds; otherwise, it fails after all retries. 
+# This helps prevent free hosting platforms like Render from putting the backend to sleep.
